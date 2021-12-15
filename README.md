@@ -11,3 +11,5 @@ a node cli bitcoin wallet
 [3]$ cash-by-hash amount <bitcoin_address>
 > broadcast transaction
 [4]$ cash-by-hash transferto <bitcoin_address> --from <account_name> --value <number>
+> more detailed...
+[5]$ cash-by-hash --help

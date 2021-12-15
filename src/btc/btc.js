@@ -20,7 +20,6 @@ const AccountInfo = async (address) => {
 		return Promise.reject(err);
 	}
 }
-
 //
 const TransactionSend = async (tx_raw) => {
 	try {
@@ -34,7 +33,6 @@ const TransactionSend = async (tx_raw) => {
 		return Promise.reject(err);
 	}
 }
-
 //spent money
 const TransactionRaw = async (addr, pkey, options) => {
 	//meta
@@ -75,7 +73,7 @@ const TransactionRaw = async (addr, pkey, options) => {
 	}
 	//catching false
 	if(!amount || value + fee > amount) {
-		console.log(amount, value+fee);
+		console.log('amount: ' + amount + ' satoshi', '\nvalue: ' + (value+fee) + ' satoshi');
 		//operation lost
 		return Promise.resolve({status: false, report: 'failed'});
 	}

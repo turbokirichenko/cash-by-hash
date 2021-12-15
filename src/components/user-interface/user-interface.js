@@ -280,15 +280,20 @@ const ExpectationAnswer = async (question, success = 'y', failed = 'n') => {
 	} while(!answer);
 }
 //
+const ParseBitcoin = (x) => {
+	const parsed = parseFloat(x, 10);
+	if(isNaN(parsed)) {return false;}
+	return parsed;
+}
 const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = false) => {
 	//
 	const amount = amnt || null;
 	let value = null;
-	let fees = approvalFee || 2700;
+	let fees = approvalFee || 2700/100000000.;
 	do {
 		try {
 			//
-			feeConfirmed = approvalFee || await ExpectationAnswer('/ current fee: '+ fees +' satoshi, confirned? (y/n): ');
+			feeConfirmed = approvalFee || await ExpectationAnswer('/ current fee: '+ fees +' tBTC, confirned? (y/n): ');
 			if(feeConfirmed === false) {
 				console.log(colors.grey('refusal'));
 				return Promise.resolve(false);
@@ -298,10 +303,15 @@ const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = 
 				console.log(colors.green('accepted'));
 			}
 			//
-			const message = amnt ? '/ value satoshi (max ' + (amnt*1 - 2700).toString() + '): ' : '/ value satoshi: ';
+			const message = amnt ? '/ value tBTC (max ' + ((amnt)/100000000. - fees).toString().substr(0, 10) + '): ' : '/ value tBTC: ';
 			if(approvalValue) value = {status: approvalValue}			
 			else value = await ScanPhrase(message, {long: 16, visible: 16});
-			if(value.status){ if(!approvalValue) process.stdout.write('\n'); }
+			if(value.status){ 
+				value.status = value.status.replace(',', '.');
+				value.status = ParseBitcoin(value.status); 
+				if(!approvalValue) 
+					process.stdout.write('\n'); 
+			}
 			else process.stdout.write(' interrupted\n');
 			if(value.status === false) {
 				if(value.report === 'maxlen'){
@@ -321,8 +331,7 @@ const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = 
 			throw new Error(err);
 		}
 	} while (!value);
-
-	return Promise.resolve({valueNum: value.status*1, feeNum: fees*1});
+	return Promise.resolve({valueNum: value.status*100000000, feeNum: fees*100000000});
 }
 module.exports = { 
 	RawModeTrue,

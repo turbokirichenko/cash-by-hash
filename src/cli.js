@@ -24,8 +24,9 @@ const CommanderInterface = () => {
 
 	commander
 		.command('marker <name>')
-		.option('--registry <filepath>')
-		.option('--check')
+		.option('--registry <filepath>', 'alternative file path')
+		.option('--check', 'checking the integrity of information')
+		.description('displays the current account token')
 		.action((name, cmd) => {
 			//initial file
 			const initfile = cmd.registry
@@ -53,7 +54,7 @@ const CommanderInterface = () => {
 		});
 	commander
 		.command('addacc [name]')
-		.option('--registry <filepath>')
+		.option('--registry <filepath>', 'alternative file path')
 		.option('--network <network>', 'network selection: BTCTEST | BTCMAIN')
 		.option('--keyless', 'does not output secret information')
 		.description('adds a new account to the registry')
@@ -98,7 +99,7 @@ const CommanderInterface = () => {
 		});
 	commander
 		.command('getacc [name]')
-		.option('--registry <filepath>')
+		.option('--registry <filepath>', 'alternative file path')
 		.option('--keyless', 'does not output secret information')
 		.option('--balance', 'displays balance of Wallet')
 		.description('displays information about the wallet')
@@ -130,7 +131,7 @@ const CommanderInterface = () => {
 		});
 	commander
 		.command('rmvacc [name]')
-		.option('--registry <filepath>')
+		.option('--registry <filepath>', 'alternative file path')
 		.option('--report', 'output result message')
 		.description('deletes information about the wallet from the registry')
 		.action((name, cmd) => {
@@ -158,6 +159,7 @@ const CommanderInterface = () => {
 		});
 	commander
 		.command('amount <address>')
+		.description('account status information')
 		.action((address)=>{
 			AddressBalance(address).then(res=> {
 				if (res.status) {
@@ -174,10 +176,11 @@ const CommanderInterface = () => {
 		});
 	commander
 		.command('transferto <address>')
-		.option('--from <name>')
-		.option('--registry <filepath>')
-		.option('--value <value>')
-		.option('--fees <fees>')
+		.option('--from <name>', 'account name')
+		.option('--registry <filepath>', 'alternative file path')
+		.option('--value <value>', 'value in BTC')
+		.option('--fees <fees>', 'tx fee in BTC')
+		.description('sends the transaction to the network')
 		.action((address, cmd) => {
 			//default registry file
 			const initfile = cmd.registry

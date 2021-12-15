@@ -25,9 +25,11 @@ const TransferToInterface = async (initfile, addrs, fullname = null, value = nul
 				return Promise.resolve({status: false, code: 11});
 			}
 			//
+			if(value) value = value.replace(',','.');
+			if(fees) fees = fees.replace(',', '.');
 			const trxStuff = {
-				value: value*1,
-				fee: fees*1,
+				value: value,
+				fee: fees,
 				utxo: balanceInfo.utxo,
 				network: data_object.p_t.network,
 				ext: addrs,
