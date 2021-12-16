@@ -12,7 +12,14 @@
   "scripts": {
     "test": "mocha ./test/*.test.js"
   },
-  "keywords": [],
+  "keywords": [
+    "bitcoin",
+    "wallet",
+    "cash",
+    "blockchain",
+    "bitcoinjs-lib",
+    "testnet"
+  ],
   "dependencies": {
     "bitcoinjs-lib": "^6.0.1",
     "bs58check": "^2.1.2",

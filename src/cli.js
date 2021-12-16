@@ -16,7 +16,7 @@ const { AllAccounts } = require('./allacc.js');
 const pkg = require('./../package.json');
 //command module
 const CommanderInterface = () => {
-	const logo = '  [=$=] CaSh By HaSh [=$=]   [Version 1.0.0 <alpha>]  ';
+	const logo = '  [=$=] CaSh By HaSh [=$=]   [v'+pkg.version+'-alpha]  ';
 	console.log(colors.bgYellow.black(logo));
 	//
 	commander
