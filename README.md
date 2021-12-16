@@ -2,6 +2,7 @@
 a node cli bitcoin wallet (testnet | mainnet)
 
 ![alt text](https://img.shields.io/badge/bitcoin-wallet-yellow|"none")
+![alt text](https://img.shields.io/npm/l/cash-by-hash?registry_uri=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2Fcash-by-hash&style=plastic|"none")
 ---
 
 ## Prologue
