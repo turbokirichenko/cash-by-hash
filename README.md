@@ -1,5 +1,6 @@
-## CaSh By HaSh
+# CaSh By HaSh
 a node cli bitcoin wallet
+
 ---
 ### intall wallet
 $ **npm** install -g cash-by-hash 
