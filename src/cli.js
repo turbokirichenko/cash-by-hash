@@ -81,6 +81,7 @@ const CommanderInterface = () => {
 			try {
 				const ans = fs.existsSync(__dirname + '/init/wallets.list');
 				if(!ans) {
+					fs.mkdirSync(__dirname + '/init');
 					fs.writeFileSync(__dirname + '/init/wallets.list', '---cash-by-hash---\n', 'utf8');
 				}
 			}
