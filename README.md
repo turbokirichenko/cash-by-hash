@@ -2,11 +2,13 @@
 a node cli bitcoin wallet (testnet | mainnet)
 
 ---
+
 ##Prologue
 
 A good thing to get to know the bitcoin network better.
 
 ---
+
 ##Base
 
 ### >intall wallet
@@ -25,6 +27,7 @@ $ **cash-by-hash** rmvacc [__account_name__] --report
 $ **cash-by-hash** --help
 
 ---
+
 ##Parting words
 
 @ This is the alpha version of the bitcoin cli wallet. 
@@ -34,6 +37,7 @@ $ **cash-by-hash** --help
 @ Be careful if you work in the main network! Only you are responsible for your funds!
 
 ---
+
 ##FAQ
 
 ### How to create an address on the main bitcoin network?
@@ -46,6 +50,7 @@ A: -> $ **cash-by-hash** --help
 A: This is a special encoded string. With it, you can make transactions on wallet faster and more secure.
 
 ---
+
 ##Epilog
 
 ###In God We Trust.
