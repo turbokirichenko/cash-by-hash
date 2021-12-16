@@ -78,6 +78,7 @@ const CommanderInterface = () => {
 		.option('--keyless', 'does not output secret information')
 		.description('adds a new account to the registry')
 		.action((name, cmd) => {
+			//create init directory
 			try {
 				const ans = fs.existsSync(__dirname + '/init/wallets.list');
 				if(!ans) {
@@ -179,9 +180,14 @@ const CommanderInterface = () => {
 		});
 	commander
 		.command('amount <address>')
+		.option('--network <network>', 'select network: BTCTEST (default) | BTCMAIN')
 		.description('account status information')
-		.action((address)=>{
-			AddressBalance(address).then(res=> {
+		.action((address, cmd)=>{
+			//default network
+			const network = (cmd.network == 'BTCTEST') || (cmd.network == 'BTCMAIN')
+				? cmd.network 
+				: 'BTCTEST';
+			AddressBalance(address, network).then(res=> {
 				if (res.status) {
 					//success
 					console.log(colors.grey('code: 0'));

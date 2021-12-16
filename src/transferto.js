@@ -11,6 +11,11 @@ const registry = require('./components/registry-interface');
 const {ObtainUserData} = require('./getacc.js');
 //
 const TransferToInterface = async (initfile, addrs, fullname = null, value = null, fees = null) => {
+	//if file not 
+	if(!fs.existsSync(initfile)) {
+		console.log(colors.red('there is no account directory'));
+		return Promise.resolve({status: false, code: 27});
+	}
 	user.RawModeTrue();
 	const data_object = await ObtainUserData(initfile, fullname);
 	if(!data_object.status) return data_object;
@@ -19,7 +24,7 @@ const TransferToInterface = async (initfile, addrs, fullname = null, value = nul
 			//get seckey
 			const seckey = marker.GetSecKey(data_object.p_b, data_object.p_t.body);
 			const infobj = btcnet.WalletInfo(data_object.p_t.network, seckey);
-			const balanceInfo = await bitcoinAPI.AccountInfo(infobj.address);
+			const balanceInfo = await bitcoinAPI.AccountInfo(infobj.address, data_object.p_t.network);
 			if(!balanceInfo) {
 				console.log('/ aborted... ');
 				return Promise.resolve({status: false, code: 11});
@@ -57,7 +62,7 @@ const TransferToInterface = async (initfile, addrs, fullname = null, value = nul
 					return Promise.resolve({status: false, code: 15});
 				}
 				//
-				const res_txid = await bitcoinAPI.TransactionSend(txRaw.report);
+				const res_txid = await bitcoinAPI.TransactionSend(txRaw.report, data_object.p_t.network);
 				if(!res_txid) {
 					console.log(colors.red('error with network!'));
 					return Promise.resolve({status: false, code: 17});
@@ -65,7 +70,7 @@ const TransferToInterface = async (initfile, addrs, fullname = null, value = nul
 				console.log(colors.yellow('#----------$ TX STATUS $----------#'));
 				console.log(colors.yellow('# txid: ') + res_txid);
 				console.log(colors.yellow('#'));
-				console.log(colors.grey('see the details on the website: https://blockstream.info/testnet/'));
+				console.log(colors.grey('see the details on the website: https://blockstream.info/'));
 			}
 			else {
 				console.log('/ aborted...');

@@ -4,7 +4,9 @@ const request = require('superagent');
 
 
 //api testnet
-const blockstreamAPI = 'https://blockstream.info/testnet/api';
+let blockstreamAPI = new Map();
+blockstreamAPI.set('BTCTEST', 'https://blockstream.info/testnet/api');
+blockstreamAPI.set('BTCMAIN', 'https://blockstream.info/api');
 //
 const CalcAmount = (utxoArr) => {
 	let amount = 0;
@@ -14,10 +16,10 @@ const CalcAmount = (utxoArr) => {
 	return amount;
 }
 //
-const ReqUtxo = async (addr) => {
+const ReqUtxo = async (addr, net) => {
 	try {
 		const res = new Promise((resolve, reject)=> {
-			https.get(blockstreamAPI + '/address/' + addr + '/utxo', (res) => {
+			https.get(blockstreamAPI.get(net) + '/address/' + addr + '/utxo', (res) => {
 				res.setEncoding('utf8');
 				let out='';
 				res.on('data', (d)=>{
@@ -38,10 +40,10 @@ const ReqUtxo = async (addr) => {
 	}
 }
 //
-const ReqTxRaw = async (tx_id) => {
+const ReqTxRaw = async (tx_id, net) => {
 	try{
 		const res = new Promise((resolve, reject) => {
-			https.get(blockstreamAPI + '/tx/' + tx_id +'/raw', (res)=>{
+			https.get(blockstreamAPI.get(net) + '/tx/' + tx_id +'/raw', (res)=>{
 				res.setEncoding('hex');
 				let out = '';
 				res.on('data', (d) => {
@@ -63,9 +65,9 @@ const ReqTxRaw = async (tx_id) => {
 	}
 }
 //
-const ReqTxID = async (tx_raw) => {
+const ReqTxID = async (tx_raw, net) => {
 	try {
-		const res = await request.post(blockstreamAPI + '/tx').send( tx_raw );
+		const res = await request.post(blockstreamAPI.get(net) + '/tx').send( tx_raw );
 		if(!res || res.statusCode >= 300) return Promise.resolve(false);
 		return Promise.resolve(res.text);
 	}
@@ -74,16 +76,16 @@ const ReqTxID = async (tx_raw) => {
 	}
 }
 //
-const GetUtxo = async (address) => {
-	const result = await ReqUtxo(address);
+const GetUtxo = async (address, net) => {
+	const result = await ReqUtxo(address, net);
 	if(!result.status) return false;
 	let utxo = [];
 	utxo = Array.from(JSON.parse(result.utxo));
 	return utxo;
 }
 //
-const GetTxRaw = async (txid) => {
-	const result = await ReqTxRaw(txid);
+const GetTxRaw = async (txid, net) => {
+	const result = await ReqTxRaw(txid, net);
 	if(!result.status) return false;
 	return Promise.resolve(result.rawhex);
 }

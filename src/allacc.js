@@ -25,6 +25,7 @@ const AllAccounts = async (initfile) => {
 	try {
 		//if file not 
 		if(!fs.existsSync(initfile)) {
+			console.log(colors.red('there is no account directory'));
 			return Promise.resolve({status: false, code: 27});
 		}
 		str = await SearchAllName(initfile);

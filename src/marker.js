@@ -10,6 +10,11 @@ const marker = require('./components/marker-interface');
 const registry = require('./components/registry-interface');
 //
 const WalletMarker = async (initfile, fullname) => {
+	//if file not 
+	if(!fs.existsSync(initfile)) {
+		console.log(colors.red('there is no account directory'));
+		return Promise.resolve({status: false, code: 27});
+	}
 	user.RawModeTrue();
 	//read from registry
 	const regline = await registry.CheckOverlap(initfile, fullname);

@@ -10,6 +10,11 @@ const marker = require('./components/marker-interface');
 const registry = require('./components/registry-interface');
 //deleting the selected regline
 const RmvAccInterface = async (initfile, name = null, report = false) => {
+	//if file not 
+	if(!fs.existsSync(initfile)) {
+		console.log(colors.red('there is no account directory'));
+		return Promise.resolve({status: false, code: 27});
+	}
 	user.RawModeTrue();
 	if (!name) name = await user.ScanAccountName();
 	if (!name) {

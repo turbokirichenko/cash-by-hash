@@ -5,9 +5,9 @@ const {ECPair} = require('ecpair');
 const {GetUtxo, GetTxRaw, CalcAmount, ReqTxID} = require('./blockstream-api.js')
 const {ScanSendValue} = require('./../components/user-interface');
 //
-const AccountInfo = async (address) => {
+const AccountInfo = async (address, net = 'BTCTEST') => {
 	try {
-		const ans = await GetUtxo(address);
+		const ans = await GetUtxo(address, net);
 		if(!ans) {
 			return Promise.resolve(false);
 		}
@@ -21,9 +21,9 @@ const AccountInfo = async (address) => {
 	}
 }
 //
-const TransactionSend = async (tx_raw) => {
+const TransactionSend = async (tx_raw, net = 'BTCTEST') => {
 	try {
-		const ans = await ReqTxID(tx_raw);
+		const ans = await ReqTxID(tx_raw, net);
 		if(!ans) {
 			return Promise.resolve(false);
 		}
@@ -61,7 +61,7 @@ const TransactionRaw = async (addr, pkey, options) => {
 		}
 		//get raw tx for segscript
 		if (!utxoArr[i].status.confirmed) continue;
-		let rawTxn = await GetTxRaw(utxoArr[i].txid);
+		let rawTxn = await GetTxRaw(utxoArr[i].txid, options.network);
 		if (!rawTxn) continue;
 		amount += utxoArr[i].value;
 		//add input data

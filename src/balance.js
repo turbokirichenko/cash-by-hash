@@ -9,9 +9,9 @@ const user = require('./components/user-interface');
 const marker = require('./components/marker-interface');
 const registry = require('./components/registry-interface');
 //
-const AddressBalance = async (addr) => {
+const AddressBalance = async (addr, net = 'BTCTEST') => {
 	try {
-		const balanceInfo = await bitcoinAPI.AccountInfo(addr);
+		const balanceInfo = await bitcoinAPI.AccountInfo(addr, net);
 		if (!balanceInfo) {
 			return Promise.resolve({status: false, code: 11});
 		}

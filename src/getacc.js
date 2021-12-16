@@ -49,6 +49,11 @@ const ObtainUserData = async(initfile, fullname = null) => {
 }
 //
 const GetAccInterface = async (initfile, fullname, approval = false, balance = false) => {
+	//if file not 
+	if(!fs.existsSync(initfile)) {
+		console.log(colors.red('there is no account directory'));
+		return Promise.resolve({status: false, code: 27});
+	}
 	user.RawModeTrue();
 	const data_object = await ObtainUserData(initfile, fullname);
 	if(!data_object.status) return data_object;
@@ -59,7 +64,7 @@ const GetAccInterface = async (initfile, fullname, approval = false, balance = f
 			const infobj = btcnet.WalletInfo(data_object.p_t.network, seckey);
 			let balanceInfo;
 			if(balance) {
-				balanceInfo = await bitcoinAPI.AccountInfo(infobj.address);
+				balanceInfo = await bitcoinAPI.AccountInfo(infobj.address, data_object.p_t.network);
 				if (!balanceInfo) {
 					balanceInfo= {amount: 0, utxo: []};
 				}
