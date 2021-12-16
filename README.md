@@ -1,4 +1,4 @@
-# CaSh By HaSh [Version 1.0.0 <alpha>]
+# CaSh By HaSh [Version 1.0.0 __<alpha>__]
 a node cli bitcoin wallet
 
 ---
