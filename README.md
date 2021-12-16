@@ -2,6 +2,11 @@
 a node cli bitcoin wallet (testnet | mainnet)
 
 ---
+##Prologue
+
+A good thing to get to know the bitcoin network better.
+
+---
 ##Base
 
 ### >intall wallet
@@ -20,7 +25,7 @@ $ **cash-by-hash** rmvacc [__account_name__] --report
 $ **cash-by-hash** --help
 
 ---
-##Description
+##Parting words
 
 @ This is the alpha version of the bitcoin cli wallet. 
 @ You can create an account, find/remove an account by name, or use a "marker". 
@@ -37,5 +42,10 @@ A: -> $ **cash-by-hash** --help
 ### How to see your private key?
 A: -> $ **cash-by-hash** --help
 
-### Marker, wtf?
+### Marker?
 A: This is a special encoded string. With it, you can make transactions on wallet faster and more secure.
+
+---
+##Epilog
+
+###In God We Trust.
