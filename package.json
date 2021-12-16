@@ -1,6 +1,6 @@
 {
   "name": "cash-by-hash",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "a node cli bitcoin wallet",
   "main": "index.js",
   "preferGlobal": true,
