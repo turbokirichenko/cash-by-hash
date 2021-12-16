@@ -34,14 +34,17 @@ const TransferToInterface = async (initfile, addrs, fullname = null, value = nul
 				network: data_object.p_t.network,
 				ext: addrs,
 			}
-			if(!value || !fees) {
-				const res = await user.ScanSendValue(balanceInfo.amount, trxStuff.value, trxStuff.fee);
-				if (!res) {
-					console.log('/ aborted... ');
-					return Promise.resolve({status: false, code: 14})
-				}
-				trxStuff.value = res.valueNum;
-				trxStuff.fee = res.feeNum;
+			const res = await user.ScanSendValue(balanceInfo.amount, trxStuff.value, trxStuff.fee);
+			if (!res) {
+				console.log('/ aborted... ');
+				return Promise.resolve({status: false, code: 14})
+			}
+			trxStuff.value = res.valueNum;
+			trxStuff.fee = res.feeNum;
+			if(trxStuff.value < 10000.) {
+				console.log(colors.red('The value is too small:  < 0.0001 BTC'));
+				console.log('/ aborted... ');
+				return Promise.resolve({status: false, code: 14})
 			}
 			//
 			const confirmed = await user.ExpectationAnswer('/ confirm transaction? (y/n): ');

@@ -286,10 +286,15 @@ const ParseBitcoin = (x) => {
 	return parsed;
 }
 const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = false) => {
-	//
-	const amount = amnt || null;
+	//amnt - satoshi, approval - BTC 
+	const amount = amnt/100000000. || null;
 	let value = null;
 	let fees = approvalFee || 2700/100000000.;
+	//check balance
+	if(amount - fees < 0.0001) {
+		console.log(colors.red('the balance is too low!'));
+		return Promise.resolve(false);
+	}
 	do {
 		try {
 			//
@@ -300,10 +305,10 @@ const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = 
 			}
 			else {
 				//
-				console.log(colors.green('accepted'));
+				if(!approvalFee) console.log(colors.green('accepted'));
 			}
 			//
-			const message = amnt ? '/ value tBTC (max ' + ((amnt)/100000000. - fees).toString().substr(0, 10) + '): ' : '/ value tBTC: ';
+			const message = amnt ? '/ value tBTC (max ' + (amount - fees).toString().substr(0, 8) + '): ' : '/ value tBTC: ';
 			if(approvalValue) value = {status: approvalValue}			
 			else value = await ScanPhrase(message, {long: 16, visible: 16});
 			if(value.status){ 
@@ -331,6 +336,7 @@ const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = 
 			throw new Error(err);
 		}
 	} while (!value);
+	//return in satoshi
 	return Promise.resolve({valueNum: value.status*100000000, feeNum: fees*100000000});
 }
 module.exports = { 

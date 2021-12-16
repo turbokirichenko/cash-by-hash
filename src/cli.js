@@ -11,6 +11,7 @@ const { AddressBalance } = require('./balance.js');
 const { TransferToInterface } = require('./transferto.js');
 const { WalletMarker } = require('./marker.js');
 const { ControlMarker } = require('./control.js');
+const { AllAccounts } = require('./allacc.js');
 //json objects
 const pkg = require('./../package.json');
 //command module
@@ -52,6 +53,24 @@ const CommanderInterface = () => {
 						console.error(err);
 					});
 		});
+	commander
+		.command('allacc')
+		.option('--registry <filepath>', 'alternative file path')
+		.description('displays all accounts on the wallet')
+		.action((cmd) => {
+			//default registry file
+			const initfile = cmd.registry
+				? path.normalize(process.cwd() +'/'+ cmd.registry)
+				: path.normalize(__dirname + '/init/wallets.list');
+			AllAccounts(initfile)
+				.then(res => {
+					//output status
+					console.log(colors.grey('code: ' + res.code));
+				})
+				.catch(err => {
+					console.error(err);
+				});
+		})
 	commander
 		.command('addacc [name]')
 		.option('--registry <filepath>', 'alternative file path')
@@ -178,8 +197,8 @@ const CommanderInterface = () => {
 		.command('transferto <address>')
 		.option('--from <name>', 'account name')
 		.option('--registry <filepath>', 'alternative file path')
-		.option('--value <value>', 'value in BTC')
-		.option('--fees <fees>', 'tx fee in BTC')
+		.option('--value <value>', 'value (BTC)')
+		.option('--fees <fees>', 'tx fee (BTC)')
 		.description('sends the transaction to the network')
 		.action((address, cmd) => {
 			//default registry file
