@@ -1,6 +1,6 @@
 {
   "name": "cash-by-hash",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "a node cli bitcoin wallet",
   "main": "index.js",
   "preferGlobal": true,
@@ -12,6 +12,14 @@
   "scripts": {
     "test": "mocha ./test/*.test.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:turbokirichenko/cash-by-hash.git"
+  },
+  "bugs": {
+    "url": "https://github.com/turbokirichenko/cash-by-hash/issues"
+  },
+  "homepage": "https://github.com/turbokirichenko/cash-by-hash#readme",
   "keywords": [
     "bitcoin",
     "wallet",

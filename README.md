@@ -1,6 +1,7 @@
-# CaSh By HaSh [Version 1.0.3-alpha]
+# CaSh By HaSh [alpha]
 a node cli bitcoin wallet (testnet | mainnet)
 
+![alt text](https://img.shields.io/badge/bitcoin-wallet-yellow|"none")
 ---
 
 ## Prologue
@@ -11,19 +12,19 @@ A good thing to get to know the bitcoin network better.
 
 ## Base
 
-### >intall wallet
+### > intall wallet
 $ **npm** install -g cash-by-hash 
-### >add account
+### > add account
 $ **cash-by-hash** addacc [__account_name__] 
-### >account status 1
+### > account status 1
 $ **cash-by-hash** getacc [__account_name__] --balance --keyless
-### >account status 2
+### > account status 2
 $ **cash-by-hash** amount <__bitcoin_address__>
-### >broadcast transaction
+### > broadcast transaction
 $ **cash-by-hash** transferto <__bitcoin_address__> --from <__account_name__> --value <__number__>
 ### > remove account
 $ **cash-by-hash** rmvacc [__account_name__] --report
-### >more detailed...
+### > more detailed...
 $ **cash-by-hash** --help
 
 ---
