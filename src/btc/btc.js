@@ -2,7 +2,7 @@
 const btc = require('bitcoinjs-lib');
 const btcnet = require('./../components/btcnet');
 const {ECPair} = require('ecpair');
-const {GetUtxo, GetTxRaw, CalcAmount, ReqTxID} = require('./blockstream-api.js')
+const {GetUtxo, GetTxRaw, CalcAmount, ReqTxID, ReqRecommendedFee} = require('./blockstream-api.js')
 const {ScanSendValue} = require('./../components/user-interface');
 //
 const AccountInfo = async (address, net = 'BTCTEST') => {
@@ -13,11 +13,11 @@ const AccountInfo = async (address, net = 'BTCTEST') => {
 		}
 		const amount = CalcAmount(ans);
 		if(!amount) {
-			return Promise.resolve(false);
+			return Promise.resolve({utxo: [], amount: 0});
 		}
 		return Promise.resolve({utxo: ans, amount: amount});
 	} catch (err) {
-		return Promise.reject(err);
+		return Promise.reject('lost connection!');
 	}
 }
 //
@@ -31,6 +31,17 @@ const TransactionSend = async (tx_raw, net = 'BTCTEST') => {
 	} catch (err) {
 		//
 		return Promise.reject(err);
+	}
+}
+//
+const GetFees = async () => {
+	try {
+		const fees = await ReqRecommendedFee();
+		if(!fees) return false;
+		return Promise.resolve(fees * 225);
+	}
+	catch (err) {
+		return Promise.reject('lost connection!');
 	}
 }
 //spent money
@@ -105,5 +116,6 @@ const TransactionRaw = async (addr, pkey, options) => {
 module.exports = {
 	AccountInfo,
 	TransactionSend,
+	GetFees,
 	TransactionRaw,
 };

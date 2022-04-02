@@ -12,7 +12,7 @@ const GenNameTag = (name, marker, pwd_hash) => {
 	return '<' + tag + hash6 + '>';
 }
 const ControlRegLine = (regline, pwd_hash) => {
-	const regtest = new RegExp('(<(\\w+)\\**\\w+>)(\\w+)', 'g');
+	const regtest = new RegExp('(<(\\w+)\\**\\w+>)([A-Za-z0-9\\/_=+]+)', 'g');
 	const match = Array.from(regline.matchAll(regtest));
 	const name = match[0][2];
 	const marker = match[0][3];
@@ -25,17 +25,17 @@ const ControlRegLine = (regline, pwd_hash) => {
 	}
 }
 const ExtractMarker = (regline, pwd_hash) => {
-	const regtest = new RegExp('(<(\\w+)\\**\\w+>)(\\w+)', 'g');
+	const regtest = new RegExp('(<(\\w+)\\**\\w+>)([A-Za-z0-9\\/_=+]+)', 'g');
 	const match = Array.from(regline.matchAll(regtest));
 	if(!match[0]) return false;
 	const name = match[0][2];
 	const marker = match[0][3];
 	const answer = GenNameTag(name, marker, pwd_hash);
 	if(answer && answer == match[0][1]) {
-		return marker;
+		return { marker, res: true };
 	}
 	else {
-		return false;
+		return { marker, res: false};
 	}
 }
 const WriteRegLine = (initfile, regline) => {
@@ -51,7 +51,7 @@ const WriteRegLine = (initfile, regline) => {
 }
 const CheckOverlap = (initfile, name) => {
 	return new Promise((resolve, reject) => {
-		const regtest = new RegExp(`<${name}\\**\\w+>\\w+`, 'g');
+		const regtest = new RegExp(`<${name}\\**\\w+>[A-Za-z\\/0-9_=+]+`, 'g');
 		try{
 			if(!name)resolve(false);
 			const internal = fs.readFileSync(initfile, 'utf8');
@@ -74,7 +74,7 @@ const RemoveLine = (initfile, regline, pwd_hash) => {
 				return 
 			}
 			const mrk = ExtractMarker(regline, pwd_hash);
-			if(!mrk) {
+			if(!mrk || !mrk.res) {
 				//failed to delete
 				resolve(false);
 				return
@@ -82,7 +82,7 @@ const RemoveLine = (initfile, regline, pwd_hash) => {
 			const internal = fs.readFileSync(initfile, 'utf8');
 			const data = internal.replace(regline + '\n','');
 			fs.writeFileSync(initfile, data, 'utf8');
-			resolve(mrk);
+			resolve(mrk.marker);
 			return
 		}
 		catch (err) {

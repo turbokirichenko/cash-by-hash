@@ -25,11 +25,11 @@ const AllAccounts = async (initfile) => {
 	try {
 		//if file not 
 		if(!fs.existsSync(initfile)) {
-			console.log(colors.red('there is no account directory'));
+			console.log(colors.red('there is no account directory!'));
 			return Promise.resolve({status: false, code: 27});
 		}
 		str = await SearchAllName(initfile);
-		console.log(colors.yellow('#----------$ Accounts $----------#\n') + str);
+		console.log(colors.grey('# dir: ' + process.cwd() + '/wallets.list') + str);
 		return Promise.resolve({status:true, code: 0});
 	}
 	catch (err) {

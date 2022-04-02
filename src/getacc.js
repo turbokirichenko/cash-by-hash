@@ -34,13 +34,14 @@ const ObtainUserData = async(initfile, fullname = null) => {
 		}
 		//extract marker
 		token = registry.ExtractMarker(regline, pwd_hash);
-		if(!token) {
-			console.log(colors.red('WARNING the password is incorrect!'));
-			console.log('/ aborted... ');
-			return Promise.resolve({status: false, code: 20});
+		if(!token.res) {
+			console.log(colors.red('WARNING marker has been modified!'));
+			console.log('continue?');
+			//console.log('/ aborted... ');
+			//return Promise.resolve({status: false, code: 20});
 		}
 	}
-	const partition = await marker.ExtractMarkerPartition(token);
+	const partition = await marker.ExtractMarkerPartition(token.marker);
 	if(!partition) {
 		console.log(colors.red('marker not defined!'));
 		console.log('/ aborted... ');
@@ -70,13 +71,13 @@ const GetAccInterface = async (initfile, fullname, approval = false, balance = f
 					balanceInfo= {amount: 0, utxo: []};
 				}
 			}
-			console.log(colors.yellow('#----------$ Account Info $----------#'));
-			console.log(colors.yellow('#'));
-			if(fullname) console.log(colors.yellow('# name: ') + fullname);
-			console.log(colors.yellow('# address: ') + infobj.address);
-			if(balance)console.log(colors.yellow('# amount: ') + balanceInfo.amount / 100000000. + ' tBTC')
-			if(approval) console.log(colors.yellow('# private: ') + colors.grey(infobj.seckey.toString('hex')));
-			console.log(colors.yellow('#'));
+			console.log(colors.grey(`#----------$ ${data_object.p_t.network} NETWORK $----------#`));
+			console.log(colors.grey('#'))
+			if(fullname) console.log(colors.grey('# name: ') + fullname);
+			console.log(colors.grey('# address: ') + infobj.address);
+			if(balance)console.log(colors.grey('# amount: ') + balanceInfo.amount / 100000000. + ' tBTC')
+			if(approval) console.log(colors.grey('# private: ') + colors.grey(infobj.seckey.toString('hex')));
+			console.log(colors.grey('#'));
 			if(approval)console.log(colors.red('* DO NOT GIVE THE PRIVATE KEY TO ANYONE!!!'));
 			if(balance) {
 				balanceInfo.utxo.forEach(txn => {

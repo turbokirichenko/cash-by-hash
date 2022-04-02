@@ -43,7 +43,7 @@ const ReqUtxo = async (addr, net) => {
 const ReqTxRaw = async (tx_id, net) => {
 	try{
 		const res = new Promise((resolve, reject) => {
-			https.get(blockstreamAPI.get(net) + '/tx/' + tx_id +'/raw', (res)=>{
+			https.get(blockstreamAPI.get(net) + '/tx/' + tx_id +'/raw', (res) =>{
 				res.setEncoding('hex');
 				let out = '';
 				res.on('data', (d) => {
@@ -89,9 +89,30 @@ const GetTxRaw = async (txid, net) => {
 	if(!result.status) return false;
 	return Promise.resolve(result.rawhex);
 }
+//fee : "fastest" - default, "halfHour", "hour"
+const ReqRecommendedFee = async () => {
+	const getfees = new Promise((resolve, reject) => {
+		let out = '';
+		https.get('https://bitcoinfees.earn.com/api/v1/fees/recommended', (res) => {
+			res.setEncoding('utf8');
+			let out = '';
+			res.on('data', d=> {
+				out = out + d;
+			});
+			res.on('end', () => {
+				feesobj = JSON.parse(out);
+				resolve(feesobj.fastestFee);
+			});
+		});
+	});
+	
+	return getfees;
+}
+
 module.exports = {
 	CalcAmount,
 	GetUtxo,
 	GetTxRaw,
 	ReqTxID,
+	ReqRecommendedFee,
 }

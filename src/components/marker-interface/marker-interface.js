@@ -1,5 +1,7 @@
 //
 const bs58check = require('bs58check');
+const base64 = require('base-64');
+const yenc = require('simple-yenc');
 const md5 = require('md5');
 const { Encrypt, Decrypt, Hash256 } = require('./../endcrypt');
 //marker generating
@@ -10,17 +12,19 @@ const GenMarker = (password_buf, seckey, network = 'BTCTEST', version = '72') =>
 		const postfix = md5(network).substr(2, 4);
 		const encstr = Encrypt(seckey, pwdkey.substr(0, pwdkey.length/2)) + postfix;
 		const prefix = version + Hash256(encstr + md5(pwdkey) + network).substr(0,6);
-		return bs58check.encode(Buffer.from(prefix + encstr, 'hex'));
+				
+		const buf = Buffer.from(prefix + encstr, 'hex');
+		return buf.toString('base64');
 	}
 	catch (err) {
 		//
-		throw new Error('error: failed inputs');
+		throw new Error(err);
 	}
 }
-//extract network by postfiz hash
+//extract network by postfix hash
 const ExtractNetwork = (nethash) => {
 	//network names array
-	const networkMaster = ['BTCTEST', 'BTCMAIN', 'LITE', 'DOGE'];
+	const networkMaster = ['BTCTEST', 'BTCMAIN', 'LTCMAIN', 'DOGEMAIN'];
 	const networkLength = 2;
 	for (let i = 0; i < networkLength; ++i) {
 		if(md5(networkMaster[i]).substr(2,4) == nethash) {
@@ -29,11 +33,12 @@ const ExtractNetwork = (nethash) => {
 	}
 	return false;
 }
+
 //part marker
 const ExtractMarkerPartition = (marker, version = '72') => {
 	//decoding
 	try {
-		const dechex_marker = bs58check.decode(marker).toString('hex');
+		const dechex_marker = Buffer.from(marker, 'base64').toString('hex');
 		const prefix = dechex_marker.substr(0,8);
 		if (prefix.substr(0,2) != version) {
 			//versions don't match
@@ -54,10 +59,11 @@ const ExtractMarkerPartition = (marker, version = '72') => {
 	}
 	catch (err) {
 		//catching error
-		throw new Error('error: failed marker');
+		throw new Error(err);
 	}
 }
-//
+
+//control password on internal collision
 const ControlPassword = (pwd_buf, prefix, body, network = 'BTCTEST') => {
 	//create answer
 	try {
@@ -78,6 +84,7 @@ const ControlPassword = (pwd_buf, prefix, body, network = 'BTCTEST') => {
 		throw new Error(err);
 	}
 }
+
 //get key from marker
 const GetSecKey = (pwd_buf, body) => {
 	//decrypted
@@ -90,6 +97,7 @@ const GetSecKey = (pwd_buf, body) => {
 		throw new Error(err);
 	}
 }
+
 module.exports = {
 	GenMarker,
 	ExtractNetwork,

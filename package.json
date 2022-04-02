@@ -29,6 +29,7 @@
     "testnet"
   ],
   "dependencies": {
+    "base-64": "^1.0.0",
     "bitcoinjs-lib": "^6.0.1",
     "bs58check": "^2.1.2",
     "colors": "^1.4.0",
@@ -36,8 +37,10 @@
     "ecpair": "^1.0.1",
     "md5": "^2.3.0",
     "secp256k1": "^3.6.2",
+    "simple-yenc": "^0.0.2",
     "superagent": "^6.1.0",
-    "tiny-secp256k1": "^2.1.2"
+    "tiny-secp256k1": "^2.1.2",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "mocha": "^9.1.3"

@@ -9,10 +9,11 @@ const marker = require('./components/marker-interface');
 const registry = require('./components/registry-interface');
 
 //create new account
-AddAccInterface = async (initfile, fullname = null, network = 'BTCTEST', approval = true) => {
+AddAccInterface = async (initfile, fullname = null, network = 'BTCTEST', approval = true, segwit = false) => {
 	user.RawModeTrue();
+	console.log(colors.gray('# [left ctrl + c]: exit'));
 	//input: name, password. check name for unique
-	if(!fullname) fullname = await user.ScanAccountName();
+	if(!fullname) fullname = await user.ScanAccountName(20);
 	if(!fullname) {
 		console.log('/ aborted... ');
 		return Promise.resolve({status: false, code: 1});
@@ -37,17 +38,17 @@ AddAccInterface = async (initfile, fullname = null, network = 'BTCTEST', approva
 	}
 	//wallet information
 	const pwd_hash = md5(password_buf);
-	const infobj = btcnet.WalletInfo(network);
+	const infobj = btcnet.SpawnWallet(network);
 	const token = marker.GenMarker(password_buf, infobj.seckey, network);
 	const nametag = registry.GenNameTag(fullname, token, pwd_hash);
 	//console out
-	console.log(colors.yellow('#---------$ ALMOST DONE $----------#'));
-	console.log(colors.yellow('#'));
-	console.log(colors.yellow('# acc name: ') + colors.white(fullname));
-	console.log(colors.yellow('# address : ') + colors.white(infobj.address));
-	if(approval)console.log(colors.yellow('# private*: ') + colors.grey(infobj.seckey.toString('hex')));
-	console.log(colors.yellow('# marker**: ') + colors.white(token));
-	console.log(colors.yellow('#'));
+	console.log(colors.gray(`#---------$ ${network} NETWORK $----------#`));
+	console.log(colors.gray('#'));
+	console.log(colors.gray('# acc name: ') + fullname);
+	console.log(colors.gray('# address : ') + infobj.address);
+	if(approval)console.log(colors.gray('# private*: ') + colors.grey(infobj.seckey.toString('hex')));
+	console.log(colors.gray('# marker**: ') + token);
+	console.log(colors.gray('#'));
 	if(approval)console.log(colors.red('* DO NOT GIVE THE PRIVATE KEY TO ANYONE!!!                        '));
 	console.log(colors.red('** The MARKER is needed to make transaction. DO NOT LOSE it!!!    \n'));
 	//answer

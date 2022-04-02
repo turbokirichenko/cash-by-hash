@@ -22,6 +22,8 @@ const MakeAddrByKey = (obj) => {
 	const addr = btc.payments.p2pkh(obj);
 	return addr;
 }
+
+//account's info by secret key
 const WalletInfo = (netstr, seckey) => {
 	//get network
 	const network = NetMode(netstr);
@@ -31,7 +33,7 @@ const WalletInfo = (netstr, seckey) => {
 	let keyPair = null;
 	//get stuff
 	if(seckey) keyPair = ECPair.fromPrivateKey(seckey, network);
-	else keyPair = MakeRandomPair({network});
+	else return false;
 	const pbits = MakeAddrByKey({
 		pubkey: keyPair.publicKey,
 		network: network
@@ -39,4 +41,29 @@ const WalletInfo = (netstr, seckey) => {
 	//return info
 	return {address: pbits.address, seckey: keyPair.privateKey};
 }
-module.exports = {NetMode, MakeRandomPair, MakeAddrByKey, WalletInfo};
+
+//generate secret key and address for new account
+const SpawnWallet = (netstr) => {
+	//get network
+	const network = NetMode(netstr);
+	if(network === false) {
+		return false;
+	}	
+	let keyPair = MakeRandomPair({network});
+	//get stuff
+	keyPair = ECPair.fromPrivateKey(keyPair.privateKey, network);
+	const pbits = MakeAddrByKey({
+		pubkey: keyPair.publicKey,
+		network: network
+	});
+	//return new wallet's info
+	return {address: pbits.address, seckey: keyPair.privateKey};
+}
+//
+module.exports = {
+	NetMode, 
+	MakeRandomPair, 
+	MakeAddrByKey, 
+	WalletInfo,
+	SpawnWallet,
+};

@@ -7,6 +7,10 @@ const RawModeTrue = () => {
 	process.stdin.setRawMode(true);
 }
 //
+const RawModeFalse = () => {
+	process.stdin.setRawMode(false);
+}
+// 
 const OnceButton = (encoding = 'utf8') => {
 	//start sdtin and encoding
 	process.stdin.resume();
@@ -16,7 +20,7 @@ const OnceButton = (encoding = 'utf8') => {
 		//input symbol
 		process.stdin.once('data', c=> {
 			//backspace
-			if(c.charCodeAt(0) == 8) {
+			if(c.charCodeAt(0) == 8 || c.charCodeAt(0) == 127) {
 				process.stdin.pause();
 				resolve('BACK');
 			}
@@ -26,7 +30,7 @@ const OnceButton = (encoding = 'utf8') => {
 				resolve('SIGN');
 			}
 			//esc
-			if(c.charCodeAt(0) == 27){
+			if(c.charCodeAt(0) == 27 || c.charCodeAt(0) == 3){
 				process.stdin.pause();
 				resolve('EXIT');
 			}
@@ -47,6 +51,7 @@ const ScanPhrase = async (message, opt) => {
 		try {
 			//
 			const ch = await OnceButton();
+
 			//
 			switch(ch){
 				case "EXIT":
@@ -69,22 +74,22 @@ const ScanPhrase = async (message, opt) => {
 	}
 	return Promise.resolve({status: false, report: 'maxlen', meta: word});
 }
-//
+//user input
 const ShrederLine = async (message, opt) => {
 	process.stdout.write(message);
-	//
+	//meta data
 	let long = opt.long || 64;
 	let data = opt.salt ? md5(opt.salt).substr(0, 8) : '12345678';
 	let cap = 0;
-	//
+	//get sha hash of word
 	const sha256 = crypto.createHash('sha256');
 	while (long) {
 		try {
-			//
+			//refresh
 			const ch = await OnceButton();
 			if((/[!@#$%^&*_]*/g).test(ch)) cap+=2;
 			if((/[0-9]*/g).test(ch)) cap++;
-			//
+			//check by collision
 			switch (ch) {
 				case "EXIT":
 					return Promise.resolve({status: false, report: 'exit'});
@@ -101,7 +106,7 @@ const ShrederLine = async (message, opt) => {
 				default:
 					const lockStr = md5(ch + data + ch);
 					data = md5(lockStr + data.substr(0, data.length/2));
-			}
+			} 
 			--long;
 		}
 		catch (err) {
@@ -111,9 +116,10 @@ const ShrederLine = async (message, opt) => {
 	}
 	return Promise.resolve({status: false, report: 'maxlen'});
 }
-//
-const ScanAccountName = async (opt) => {
+//input account name DEPRECATED!!!
+const ScanAccName = async (opt) => {
 	//meta
+	RawModeTrue();
 	let statusObj = null;
 	let maxLong =  16;
 	do {
@@ -139,9 +145,81 @@ const ScanAccountName = async (opt) => {
 	} while (!statusObj);
 	return Promise.resolve(statusObj.status);
 }
+//input account name v2.0 (with false raw mode)
+const ScanAccountName = async (long) => {
+	//set raw mode to false state
+	RawModeFalse();
+	//output message
+	process.stdout.write('/ account name (max len ' + long + '): ');
+	//begin user input
+	process.stdin.resume();
+	const userInputPromise = () => {
+		return new Promise((resolve, reject) => {
+			process.stdin.on('data', data => {
+				process.stdin.setEncoding('utf8');
+				resolve(data.toString());
+				//end input
+				process.stdin.pause();
+			})
+			process.stdin.on('error', err => {
+				reject(err);
+			})
+		});
+	}
+	//get account name from promise
+	const accountName = await userInputPromise();
+	let wordlong = 0;
+	//check len of name and return result data
+	return long < (wordlong = (accountName.length - 1))
+		? colors.red("max long for account name is: " + long + "!!! Yours: " + wordlong +"!") 
+		: accountName.substr(0, wordlong);
+}
+//input address (with regex checking)
+const ScanAddress = async (network) => {
+	//set raw mode to false state
+	RawModeFalse();
+	//regex for this network
+	let regexcoin = '';
+	switch (network) {
+		case 'BTCTEST' : 
+			regexcoin = /^(?:[mn]{1}[a-km-zA-HJ-NP-Z1-9]{26,33}|tb1[a-z0-9]{39,59})$/g;
+			break;
+		case 'BTCMAIN' :
+			regexcoin = /^(?:[13]{1}[a-km-zA-HJ-NP-Z1-9]{26,33}|bc1[a-z0-9]{39,59})$/g;
+			break;
+	}
+	//output message
+	process.stdout.write("/ recipient's address: ");
+	//begin user input
+	process.stdin.resume();
+	const userInputPromise = () => {
+		return new Promise((resolve, reject) => {
+			process.stdin.on('data', data => {
+				process.stdin.setEncoding('utf8');
+				resolve(data.toString());
+				//end input
+				process.stdin.pause();
+			})
+			process.stdin.on('error', err => {
+				reject(err);
+			})
+		});
+	}
+	//get account name from promise
+	const address = await userInputPromise();
+	let wordlong = 0;
+	//check address with regex
+	const res = regexcoin.test(address.substr(0, address.length - 1))
+		? address.substr(0, address.length - 1)
+		: null;
+	//error message
+	if(!res) console.log(colors.red("wrong "+network+" address!!!"));
+	return res;
+}
 //input marker
 const ScanAccountMarker = async (opt) => {
 	//meta
+	RawModeTrue();
 	let statusObj = null;
 	let maxLong = 64;
 	let maxVisb = 16;
@@ -170,6 +248,7 @@ const ScanAccountMarker = async (opt) => {
 //input password
 const ScanAccountPassword = async (opt) => {
 	//meta data
+	RawModeTrue();
 	let statusObj = null;
 	let maxLong = 64;
 	let salt = '12345678';
@@ -198,6 +277,7 @@ const ScanAccountPassword = async (opt) => {
 //input password for new account
 const ScanAndSubmitPassword = async (opt) => {
 	//meta data
+	RawModeTrue();
 	let statusObj_one = null;
 	let statusObj_two = null;
 	let maxLong = 64;
@@ -242,8 +322,9 @@ const ScanAndSubmitPassword = async (opt) => {
 	return Promise.resolve(statusObj_two.status);
 }
 //expect answer from user
-const ExpectationAnswer = async (question, success = 'y', failed = 'n') => {
+const ExpectationAnswer = async (question, success = 'y', failed = 'n', update = 'u') => {
 	//answer data
+	RawModeTrue();
 	let answer = null;
 	do {
 		try{
@@ -261,6 +342,11 @@ const ExpectationAnswer = async (question, success = 'y', failed = 'n') => {
 					if(answer.meta == failed) {
 						console.log('false');
 						return Promise.resolve(false);
+					}
+					if(answer.meta == update) {
+						console.log('load new result...');
+						answer = null;
+						continue;
 					}
 				}
 				answer = null
@@ -287,6 +373,7 @@ const ParseBitcoin = (x) => {
 }
 const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = false) => {
 	//amnt - satoshi, approval - BTC 
+	RawModeTrue();
 	const amount = amnt/100000000. || null;
 	let value = null;
 	let fees = approvalFee || 2700/100000000.;
@@ -339,15 +426,49 @@ const ScanSendValue = async (amnt = false, approvalValue = false, approvalFee = 
 	//return in satoshi
 	return Promise.resolve({valueNum: value.status*100000000, feeNum: fees*100000000});
 }
+
+const ScanValue = async (approval, more = false) => {
+	RawModeFalse();
+	//console message
+	process.stdout.write(colors.grey('# available: ' + approval.toFixed(8).replace(/0+$/,'') + ' (' + (more ? more : '') + ')\n'));
+	process.stdout.write('/ value: ');
+	
+	//gen promise
+	//begin user input
+	process.stdin.resume();
+	const userInputPromise = () => {
+		return new Promise((resolve, reject) => {
+			process.stdin.on('data', data => {
+				process.stdin.setEncoding('utf8');
+				resolve(data.toString());
+				//end input
+				process.stdin.pause();
+			})
+			process.stdin.on('error', err => {
+				reject(err);
+			})
+		});
+	}
+	
+	//get account name from promise
+	const value = await userInputPromise();
+	const result =  (value.replace(',', '.')*1 > approval*1) ? null : value.replace(',', '.')*1;
+	if(result == null) console.log(colors.red('Your value more than you may to send!!!'));
+
+	return result;
+}
+
 module.exports = { 
 	RawModeTrue,
 	OnceButton,
 	ScanPhrase,
 	ShrederLine,
 	ScanAccountName,
+	ScanAddress,
 	ScanAccountMarker,
 	ScanAccountPassword,
 	ScanAndSubmitPassword,
 	ExpectationAnswer,
 	ScanSendValue,
+	ScanValue,
 }
