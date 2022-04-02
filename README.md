@@ -1,12 +1,12 @@
 # CaSh By HaSh [beta]
 ### a node cli bitcoin wallet (testnet | mainnet)
-![alt text](./logo.jpg)
 ---
 ![alt text](https://img.shields.io/badge/bitcoin-wallet-yellow|"none")
 ![alt text](https://img.shields.io/badge/btc%20test-mvwWrWtiToK6RJ1iyQh1EgQpWgJwV2NgVv-brightgreen?style=flat-square)
 ![alt text](https://img.shields.io/github/watchers/turbokirichenko/cash-by-hash?style=flat-square)
 ![alt text](https://img.shields.io/npm/dy/cash-by-hash?style=flat-square)
-
+![alt text](./logo.jpg)
+---
 ## Prologue
 
 #### A good thing to get to know the bitcoin network better.
