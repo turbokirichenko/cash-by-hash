@@ -1,5 +1,6 @@
 # CaSh By HaSh [beta]
 ### a node cli bitcoin wallet (testnet | mainnet)
+![alt text](./logo.jpg)
 ---
 ![alt text](https://img.shields.io/badge/bitcoin-wallet-yellow|"none")
 ![alt text](https://img.shields.io/badge/btc%20test-mvwWrWtiToK6RJ1iyQh1EgQpWgJwV2NgVv-brightgreen?style=flat-square)
